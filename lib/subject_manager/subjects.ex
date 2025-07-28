@@ -3,6 +3,7 @@ defmodule SubjectManager.Subjects do
   alias SubjectManager.Subjects.Subject
   alias SubjectManager.Repo
 
+# On lines _ and _ I've opted to use "atom when atom in []", but could alternatively use these:
 #   @sortable_fields %{
 #   "name" => :name,
 #   "team" => :team,
@@ -19,7 +20,6 @@ defmodule SubjectManager.Subjects do
   def list_subjects do
     Repo.all(Subject)
   end
-
 
   def list_subjects( %{
   "position" => position,
@@ -57,9 +57,14 @@ defmodule SubjectManager.Subjects do
     end
   end
 
-defp maybe_filter_name(query, ""), do: query
-defp maybe_filter_name(query, nil), do: query
-defp maybe_filter_name(query, name) do
-  where(query, [u], like(u.name, ^"%#{name}%")) # ** (Ecto.QueryError) ilike is not supported by SQLite3
-end
+  defp maybe_filter_name(query, ""), do: query
+  defp maybe_filter_name(query, nil), do: query
+  defp maybe_filter_name(query, name) do
+    where(query, [u], like(u.name, ^"%#{name}%")) # ** (Ecto.QueryError) ilike is not supported by SQLite3
+  end
+
+  def get_by_id(id) do
+    Repo.get!(Subject, id)
+  end
+
 end

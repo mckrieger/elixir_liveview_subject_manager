@@ -1,0 +1,33 @@
+<.header>
+  {@subject.name}
+  <:actions>
+    <%!-- <.link patch={~p"/subjects/#{@subject.id}/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit</.button>
+    </.link> --%>
+  </:actions>
+</.header>
+
+<div class="subject-show subject">
+    <%= if @subject.image_path do %>
+        <img
+            src={@subject.image_path}
+            alt="Preview Image"
+            class="mx-auto w-1/2 px-8 md:w-full"
+        />
+    <% else %>
+        <span>No image available</span>
+    <% end %>
+    <.list>
+        <:item title="Name">{@subject.name}</:item>
+        <:item title="Position">
+            <.badge status={@subject.position} />
+        </:item>
+        <:item title="Team">{@subject.team}</:item>
+        <:item title="Bio">{@subject.bio}</:item>
+    </.list>
+          
+          
+    </div>
+
+
+<.back navigate={~p"/subjects"}>Back to list</.back>
