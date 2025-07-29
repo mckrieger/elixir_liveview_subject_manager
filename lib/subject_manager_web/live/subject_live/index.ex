@@ -15,6 +15,10 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
     {:ok, socket}
   end
 
+  def handle_params(_params, _uri, socket) do
+    {:noreply, socket}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="subject-index space-y-4">
@@ -123,7 +127,7 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
         ]}
       />
 
-      <.link patch={~p"/subjects"}>
+      <.link phx-click="reset">
         Reset
       </.link>
     </.form>
@@ -138,6 +142,14 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
     {:noreply, socket}
   end
 
+  def handle_event("reset", _, socket) do
+    socket =
+      socket
+      |> assign(form: to_form(%{}))
+      |> assign(subjects: Subjects.list_subjects())
+    {:noreply, socket}
+  end
+
   def handle_event("confirm-delete", %{"id" => id}, socket) do
     subject = Subjects.get_subject!(id)
 
@@ -149,7 +161,7 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
 end
 
 def handle_event("delete-subject", %{"id" => id}, socket) do
-  {:ok, _} = Subjects.delete(id)
+  {:ok, _} = Subjects.delete_subject(id)
 
   socket =
     socket

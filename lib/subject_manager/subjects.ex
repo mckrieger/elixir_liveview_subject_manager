@@ -68,7 +68,7 @@ defmodule SubjectManager.Subjects do
   end
 
   # deleting in this manner will ensure changeset validations, callbacks, contraints are not skipped.
-  def delete(id) do
+  def delete_subject(id) do
     record = Repo.get(Subject, id)
     case record do
       nil ->
@@ -81,14 +81,23 @@ defmodule SubjectManager.Subjects do
     end
   end
 
-  def update_subject(id, attrs) do
-    case Repo.get(Subject, id) do
-      nil -> {:error, :not_found}
-      subject ->
-        subject
-        |> Subject.changeset(attrs)
-        |> Repo.update()
-    end
+  # def update_subject(%Subject{id: id}, attrs) do
+  #   IO.inspect(attrs, label: "UPDATE___")
+  #   case Repo.get(Subject, id) do
+  #     nil -> {:error, :not_found}
+  #     subject ->
+  #       subject
+  #       |> Subject.changeset(attrs)
+  #       |> IO.inspect()
+  #       |> Repo.update()
+  #   end
+  # end
+
+    def update_subject(subject, attrs) do
+      attrs = Map.get(attrs, "subject", attrs)
+      subject
+      |> Subject.changeset(attrs)
+      |> Repo.update()
   end
 
   def create_subject(attrs) do

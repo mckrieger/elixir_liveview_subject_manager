@@ -6,22 +6,6 @@ defmodule SubjectManagerWeb.SubjectLive.Show do
     {:ok, assign(socket, page_title: "Subject")}
   end
 
-  #    def handle_params(_params, _uri, socket) when socket.assigns.live_action == :new do
-  #   subject = %Subjects.Subject{}
-  #   {:noreply,
-  #   socket
-  #   |> assign(subject: subject)
-  #   |> assign(form: to_form(%{}))}
-  # end
-
-  # def handle_params(%{"id" => id}, _uri, socket) when socket.assigns.live_action in [:show, :edit] do
-  #   subject = Subjects.get_subject!(id)
-  #   {:noreply,
-  #   socket
-  #   |> assign(subject: subject)
-  #   |> assign(form: to_form(subject))}
-  # end
-
   def handle_params(_params, _uri, %{assigns: %{live_action: :new}} = socket) do
     subject = %Subjects.Subject{}
     {:noreply,
@@ -32,10 +16,11 @@ defmodule SubjectManagerWeb.SubjectLive.Show do
 
   def handle_params(%{"id" => id}, _uri, %{assigns: %{live_action: :edit}} = socket) do
     subject = Subjects.get_subject!(id)
+    changeset = Subjects.change_subject(subject)
     {:noreply,
     socket
     |> assign(subject: subject)
-    |> assign(form: to_form(subject))}
+    |> assign(form: to_form(changeset))}
   end
 
   def handle_params(%{"id" => id}, _uri, %{assigns: %{live_action: :show}} = socket) do
@@ -43,28 +28,6 @@ defmodule SubjectManagerWeb.SubjectLive.Show do
     {:noreply,
     assign(socket, subject: subject)}
   end
-
-
-def handle_params(_params, _uri, %{assigns: %{live_action: live_action}} = socket) do
-  socket =
-    case live_action do
-      :edit ->
-        assign(socket, form: to_form(Subjects.change_subject(socket.assigns.subject)))
-
-      :new ->
-        new_subject = %Subjects.Subject{}
-        assign(socket,
-          subject: new_subject,
-          form: to_form(Subjects.change_subject(new_subject))
-        )
-
-      _ ->
-        socket
-    end
-
-  {:noreply, socket}
-end
-
 
   def render(assigns) do
      ~H"""
@@ -74,13 +37,13 @@ end
           <% :edit -> %>Edit Subject
           <% _ -> %><%= @subject.name %>
         <% end %>
-        <:actions>
+        <%!-- <:actions>
           <%= if @live_action == :show do %>
             <.link patch={~p"/subjects/#{@subject.id}/edit"}>
               <.button>Edit</.button>
             </.link>
           <% end %>
-        </:actions>
+        </:actions> --%>
       </.header>
 
     <div class="subject-show subject">
@@ -95,7 +58,19 @@ end
           <.form for={@form} phx-submit="save" class="space-y-4">
             <.input field={@form[:image_path]} label="Image Path" />
             <.input field={@form[:name]} label="Name" />
-            <.input field={@form[:position]} label="Position" />
+            <.input
+              label="Position"
+              type="select"
+              field={@form[:position]}
+              prompt="Position"
+              options={[
+                Forward: "forward",
+                Midfielder: "midfielder",
+                Winger: "winger",
+                Defender: "defender",
+                Goalkeeper: "goalkeeper"
+              ]}
+            />
             <.input field={@form[:team]} label="Team" />
             <.input field={@form[:bio]} label="Bio" type="textarea" />
             <.button><%= if @live_action == :new, do: "Create", else: "Save" %></.button>
@@ -119,7 +94,7 @@ end
   defp cancel_path(:new, _subject), do: ~p"/subjects"
   defp cancel_path(_, subject), do: ~p"/subjects/#{subject}"
 
-def handle_event("save", %{"subject" => params}, socket) do
+def handle_event("save", params, socket) do
   case socket.assigns.live_action do
     :edit ->
       case Subjects.update_subject(socket.assigns.subject, params) do
