@@ -17,7 +17,13 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
 
   def render(assigns) do
     ~H"""
-    <div class="subject-index">
+    <div class="subject-index space-y-4">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Subjects</h1>
+        <.link navigate={~p"/subjects/new"} class="btn btn-primary">
+          + Create Subject
+        </.link>
+      </div>
       <.filter_form form={@form} />
 
       <div class="subjects" id="subjects">
@@ -79,7 +85,7 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
         <.link navigate={~p"/subjects/#{@subject}/edit"} class="btn">
         Edit
         </.link>
-        <.button phx-click="confirm-delete", phx-value-id={@subject.id} class="btn btn-danger">
+        <.button phx-click="confirm-delete" phx-value-id={@subject.id} class="btn btn-danger">
         Delete
         </.button>
       </div>

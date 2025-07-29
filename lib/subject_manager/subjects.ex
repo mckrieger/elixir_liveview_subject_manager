@@ -81,7 +81,7 @@ defmodule SubjectManager.Subjects do
     end
   end
 
-  def update(id, attrs) do
+  def update_subject(id, attrs) do
     case Repo.get(Subject, id) do
       nil -> {:error, :not_found}
       subject ->
@@ -91,10 +91,14 @@ defmodule SubjectManager.Subjects do
     end
   end
 
-  def create(attrs) do
+  def create_subject(attrs) do
     %Subject{}
     |> Subject.changeset(attrs)
     |> Repo.insert()
   end
 
+
+  def change_subject(%Subject{} = subject, attrs \\ %{}) do
+    Subject.changeset(subject, attrs)
+  end
 end

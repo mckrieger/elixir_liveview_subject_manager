@@ -22,7 +22,9 @@ defmodule SubjectManagerWeb.Router do
   # If I were really implementing an admin page, I would add a section with
   # pipe_through [:browser, :require_authenticated_user, :require_admin_level]
     live("/admin/subjects", SubjectLive.Index, :admin)
-    live("/subjects/:id", SubjectLive.Show)
+    live("/subjects/new", SubjectLive.Show, :new)
+    live("/subjects/:id", SubjectLive.Show, :show)
+    live("/subjects/:id/edit", SubjectLive.Show, :edit)
   end
 
 
