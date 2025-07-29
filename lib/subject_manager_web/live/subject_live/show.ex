@@ -8,7 +8,7 @@ defmodule SubjectManagerWeb.SubjectLive.Show do
     socket =
       socket
       |> assign(page_title: "Subject")
-      |> assign(subject: Subjects.get_by_id(id))
+      |> assign(subject: Subjects.get_subject!(id))
 
     {:ok, socket}
   end

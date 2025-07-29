@@ -63,7 +63,7 @@ defmodule SubjectManager.Subjects do
     where(query, [u], like(u.name, ^"%#{name}%")) # ** (Ecto.QueryError) ilike is not supported by SQLite3
   end
 
-  def get_by_id(id) do
+  def get_subject!(id) do
     Repo.get!(Subject, id)
   end
 
