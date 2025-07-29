@@ -19,16 +19,13 @@ defmodule SubjectManagerWeb.Router do
 
     live("/", SubjectLive.Index)
     live("/subjects", SubjectLive.Index)
-  # If I were really implementing an admin page, I would add a section with
-  # pipe_through [:browser, :require_authenticated_user, :require_admin_level]
+    # If I were really implementing an admin page, I would add a section with
+    # pipe_through [:browser, :require_authenticated_user, :require_admin_level]
     live("/admin/subjects", SubjectLive.Index, :admin)
     live("/subjects/new", SubjectLive.Show, :new)
     live("/subjects/:id", SubjectLive.Show, :show)
     live("/subjects/:id/edit", SubjectLive.Show, :edit)
   end
-
-
-
 
   # Other scopes may use custom stacks.
   # scope "/api", SubjectManagerWeb do

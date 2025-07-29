@@ -34,19 +34,19 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
         <div id="empty" class="no-results only:block hidden">
           No subjects found. Try changing your filters.
         </div>
-        <.subject :for={subject <- @subjects} subject={subject} dom_id={"subject-#{subject.id}"} live_action={@live_action}/>
+        <.subject
+          :for={subject <- @subjects}
+          subject={subject}
+          dom_id={"subject-#{subject.id}"}
+          live_action={@live_action}
+        />
       </div>
     </div>
 
-    <.modal
-      :if={@subject_to_delete}
-      id="delete-modal"
-      show
-      on_cancel={JS.push("cancel-delete")}
-    >
+    <.modal :if={@subject_to_delete} id="delete-modal" show on_cancel={JS.push("cancel-delete")}>
       <div class="p-6 space-y-4">
         <h2 class="text-xl font-semibold text-gray-900">
-          Are you sure you want to delete "<%= @subject_to_delete.name %>"?
+          Are you sure you want to delete "{@subject_to_delete.name}"?
         </h2>
         <div class="flex justify-end gap-2">
           <.button phx-click="cancel-delete" class="btn">
@@ -72,28 +72,28 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
   def subject(assigns) do
     ~H"""
     <div class="subject-card-container">
-    <.link navigate={~p"/subjects/#{@subject}"} id={@dom_id}>
-      <div class="card">
-        <img src={@subject.image_path} />
-        <h2>{@subject.name}</h2>
-        <div class="details">
-          <div class="team">
-            {@subject.team}
+      <.link navigate={~p"/subjects/#{@subject}"} id={@dom_id}>
+        <div class="card">
+          <img src={@subject.image_path} />
+          <h2>{@subject.name}</h2>
+          <div class="details">
+            <div class="team">
+              {@subject.team}
+            </div>
+            <.badge status={@subject.position} />
           </div>
-          <.badge status={@subject.position} />
         </div>
-      </div>
-    </.link>
-    <%= if @live_action == :admin do %>
-      <div class="buttons mt-2 flex gap-2">
-        <.link navigate={~p"/subjects/#{@subject}/edit"} class="btn">
-        Edit
-        </.link>
-        <.button phx-click="confirm-delete" phx-value-id={@subject.id} class="btn btn-danger">
-        Delete
-        </.button>
-      </div>
-    <% end %>
+      </.link>
+      <%= if @live_action == :admin do %>
+        <div class="buttons mt-2 flex gap-2">
+          <.link navigate={~p"/subjects/#{@subject}/edit"} class="btn">
+            Edit
+          </.link>
+          <.button phx-click="confirm-delete" phx-value-id={@subject.id} class="btn btn-danger">
+            Delete
+          </.button>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -103,7 +103,7 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
   def filter_form(assigns) do
     ~H"""
     <.form for={@form} id="filter-form" phx-change="update">
-      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" phx-debounce="300"/>
+      <.input field={@form[:q]} placeholder="Search..." autocomplete="off" phx-debounce="300" />
       <.input
         type="select"
         field={@form[:position]}
@@ -134,11 +134,12 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
     """
   end
 
-  def handle_event("update",form, socket) do
+  def handle_event("update", form, socket) do
     socket =
       socket
       |> assign(form: to_form(form))
       |> assign(subjects: Subjects.list_subjects(form))
+
     {:noreply, socket}
   end
 
@@ -147,6 +148,7 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
       socket
       |> assign(form: to_form(%{}))
       |> assign(subjects: Subjects.list_subjects())
+
     {:noreply, socket}
   end
 
@@ -157,17 +159,17 @@ defmodule SubjectManagerWeb.SubjectLive.Index do
   end
 
   def handle_event("cancel-delete", _params, socket) do
-  {:noreply, assign(socket, :subject_to_delete, nil)}
-end
+    {:noreply, assign(socket, :subject_to_delete, nil)}
+  end
 
-def handle_event("delete-subject", %{"id" => id}, socket) do
-  {:ok, _} = Subjects.delete_subject(id)
+  def handle_event("delete-subject", %{"id" => id}, socket) do
+    {:ok, _} = Subjects.delete_subject(id)
 
-  socket =
-    socket
-    |> assign(subject_to_delete: nil)
-    |> assign(subjects: Subjects.list_subjects())
+    socket =
+      socket
+      |> assign(subject_to_delete: nil)
+      |> assign(subjects: Subjects.list_subjects())
 
-  {:noreply, socket}
-end
+    {:noreply, socket}
+  end
 end
